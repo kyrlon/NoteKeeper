@@ -13,13 +13,16 @@ class GoogleKeepLog:
 
     
     def g_keep_check_loop(self):
+        n = 0
         while True:
+            n+=1
             self.fix_list(self.Groceries_list)
             self.fix_list(self.Merchandise_list)
             self.g_keep_backup()
             print("waiting....")
             time.sleep(30)
             self.g_keep_restore()
+            print("Loop %s done" % n)
         print("Done!")
 
     def g_keep_login(self):
@@ -151,13 +154,5 @@ class GoogleKeepLog:
 
 
 if __name__ == "__main__":
-    #fix_list(Groceries)
-    #g_keep_backup()
-    #g_keep_restore()
     ex = GoogleKeepLog()
-    ex.fix_list(ex.Groceries_list)
-    ex.fix_list(ex.Merchandise_list)
-    ex.g_keep_backup()
-    print("waiting....")
-    time.sleep(20)
-    ex.g_keep_restore()
+    ex.g_keep_check_loop()
