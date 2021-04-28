@@ -26,6 +26,7 @@ class GoogleKeepLog:
             print("Loop %s done" % n)
         print("Done!")
 
+
     def g_keep_login(self):
         with open("credz/cred.json",) as cred:
             self.config = json.load(cred)
@@ -34,7 +35,6 @@ class GoogleKeepLog:
         token = self.keep.getMasterToken()
         self.g_keep_search()
         self.keep.sync()
-
 
 
     def fix_list(self, store_incremental_lists):
@@ -69,6 +69,7 @@ class GoogleKeepLog:
             store_incremental_lists.add(new_entry, False)
         self.keep.sync()
 
+
     def g_keep_backup(self):
         backup_note_list = list()
         if self.Groceries_list:
@@ -89,6 +90,7 @@ class GoogleKeepLog:
                 #Human Readable
                 with open(note_name + ".txt", "w", encoding='utf-8') as f:
                     f.write(B_checklist.text)
+
 
     def g_keep_restore(self):
         self.g_keep_search()
