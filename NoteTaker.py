@@ -9,6 +9,7 @@ class GoogleKeepLog:
         self.Groceries_list = None
         self.Merchandise_list = None
         self.note_search_collection = dict()
+        self.the_cloud = None
         self.g_keep_login()
 
     
@@ -79,6 +80,7 @@ class GoogleKeepLog:
             note_name = B_checklist.title
             for num,shopping_item in enumerate(B_checklist.items):
                 backup_dict[str(num)] = [shopping_item.checked, shopping_item.text]
+                
             with open(note_name + "_json.txt", "w") as file_t:
                 file_t.write(json.dumps(backup_dict, sort_keys=True, indent=4))
             
@@ -93,8 +95,11 @@ class GoogleKeepLog:
         if any("Groceries" in stuff for stuff in self.note_search_collection.keys()):
             if any(dropping_groceries in stuff for stuff in self.note_search_collection.keys()) and self.Groceries_list:
                 self.__clear_shopping_list(self.Groceries_list)
-                with open("Groceries_json.txt","r") as f:
-                    data = json.load(f)
+                if self.the_cloud:
+                    pass #return data
+                else:
+                    with open("Groceries_json.txt","r") as f:
+                        data = json.load(f)
                 for key, value in enumerate(data.items()):
                     _, food_item = value
                     self.Groceries_list.add(food_item[1],food_item[0])
@@ -103,8 +108,11 @@ class GoogleKeepLog:
                 indicator.trash()
                 self.keep.sync()
         else:
-            with open("Groceries_json.txt","r") as f:
-                data = json.load(f)
+            if self.the_cloud:
+                pass #return data
+            else:
+                with open("Groceries_json.txt","r") as f:
+                    data = json.load(f)
             gnote = self.keep.createList('Groceries')
             for key, value in enumerate(data.items()):
                 _, food_item = value
@@ -116,8 +124,11 @@ class GoogleKeepLog:
         if any("Merchandise" in stuff for stuff in self.note_search_collection.keys()):
             if any(dropping_merchandise in stuff for stuff in self.note_search_collection.keys()) and self.Merchandise_list:
                 self.__clear_shopping_list(self.Merchandise_list)
-                with open("Merchandise (Misc., etc.)_json.txt","r") as f:
-                    data = json.load(f)
+                if self.the_cloud:
+                    pass #return data
+                else:
+                    with open("Merchandise (Misc., etc.)_json.txt","r") as f:
+                        data = json.load(f)
                 for key, value in enumerate(data.items()):
                     _, food_item = value
                     self.Merchandise_list.add(food_item[1],food_item[0])
@@ -126,8 +137,11 @@ class GoogleKeepLog:
                 indicator.trash()    
                 self.keep.sync()
         else:
-            with open("Merchandise (Misc., etc.)_json.txt","r") as f:
-                data = json.load(f)
+            if self.the_cloud:
+                pass #return data
+            else:
+                with open("Merchandise (Misc., etc.)_json.txt","r") as f:
+                    data = json.load(f)
             gnote = self.keep.createList('Merchandise (Misc., etc.)')
             for key, value in enumerate(data.items()):
                 _, food_item = value
