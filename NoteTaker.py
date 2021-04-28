@@ -20,7 +20,7 @@ class GoogleKeepLog:
             self.fix_list(self.Merchandise_list)
             self.g_keep_backup()
             print("waiting....")
-            time.sleep(30)
+            time.sleep(10)
             self.g_keep_restore()
             print("Loop %s done" % n)
         print("Done!")
@@ -39,7 +39,7 @@ class GoogleKeepLog:
     def fix_list(self, store_incremental_lists):
         if not store_incremental_lists:
             self.g_keep_restore()
-            #Need to restore store_incre
+            print("Need to restore %s List" %store_incremental_lists)
             return 
         num_on_shopping_list = 0
         shopping_list_dict = defaultdict(list)
@@ -138,6 +138,7 @@ class GoogleKeepLog:
 
     def g_keep_search(self):
         search_list = list(self.keep.find(pinned=True))
+        self.note_search_collection = dict()
         for note in search_list:
             self.note_search_collection[note.title] = note.id
         self.Merchandise_list = self.keep.get(self.__dict_key_from_str("Merchandise", self.note_search_collection))
