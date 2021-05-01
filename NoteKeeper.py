@@ -2,7 +2,7 @@ import gkeepapi
 import json, time
 import getpass
 from collections import defaultdict
-
+from pathlib import Path
 
 class GoogleKeepLog:
     def __init__(self, verbose=False):
@@ -164,6 +164,6 @@ if __name__ == "__main__":
         try:
             ex = GoogleKeepLog()
             ex.g_keep_check_loop()
-        except:
+        except Exception as e:
             time.sleep(10)
             continue
