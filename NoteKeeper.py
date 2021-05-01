@@ -2,7 +2,7 @@ import gkeepapi
 import json, time
 import getpass
 from collections import defaultdict
-
+from pathlib import Path
 
 class GoogleKeepLog:
     def __init__(self, verbose=False):
@@ -10,6 +10,10 @@ class GoogleKeepLog:
         self.Merchandise_list = None
         self.note_search_collection = dict()
         self.g_keep_login()
+        self.logging_folder = Path("Backup")
+        self.logging_folder.mkdir(parents=True, exist_ok=True)
+        self.credential_folder = Path("credz")
+        self.credential_folder.mkdir(parents=True, exist_ok=True)
 
     
     def g_keep_check_loop(self):
@@ -20,13 +24,13 @@ class GoogleKeepLog:
             self.fix_list(self.Merchandise_list)
             self.g_keep_backup()
             print("waiting....")
-            time.sleep(10)
+            time.sleep(4)
             self.g_keep_restore()
             print("Loop %s done" % n)
         print("Done!")
 
     def g_keep_login(self):
-        with open("credz/cred.json",) as cred:
+        with open(credential_folder / "cred.json",) as cred:
             self.config = json.load(cred)
         self.keep = gkeepapi.Keep()
         example = self.keep.login(self.config["username"], self.config["password"])
@@ -79,11 +83,11 @@ class GoogleKeepLog:
             note_name = B_checklist.title
             for num,shopping_item in enumerate(B_checklist.items):
                 backup_dict[str(num)] = [shopping_item.checked, shopping_item.text]
-            with open(note_name + "_json.txt", "w") as file_t:
+            with open(self.logging_folder / (note_name + "_json.txt"), "w") as file_t:
                 file_t.write(json.dumps(backup_dict, sort_keys=True, indent=4))
             
             #Human Readable
-            with open(note_name + ".txt", "w", encoding='utf-8') as f:
+            with open(self.logging_folder / (note_name + ".txt"), "w", encoding='utf-8') as f:
                 f.write(B_checklist.text)
 
     def g_keep_restore(self):
@@ -93,7 +97,7 @@ class GoogleKeepLog:
         if any("Groceries" in stuff for stuff in self.note_search_collection.keys()):
             if any(dropping_groceries in stuff for stuff in self.note_search_collection.keys()) and self.Groceries_list:
                 self.__clear_shopping_list(self.Groceries_list)
-                with open("Groceries_json.txt","r") as f:
+                with open(self.logging_folder / ("Groceries_json.txt"),"r") as f:
                     data = json.load(f)
                 for key, value in enumerate(data.items()):
                     _, food_item = value
@@ -103,7 +107,7 @@ class GoogleKeepLog:
                 indicator.trash()
                 self.keep.sync()
         else:
-            with open("Groceries_json.txt","r") as f:
+            with open(self.logging_folder / ("Groceries_json.txt"),"r") as f:
                 data = json.load(f)
             gnote = self.keep.createList('Groceries')
             for key, value in enumerate(data.items()):
@@ -116,7 +120,7 @@ class GoogleKeepLog:
         if any("Merchandise" in stuff for stuff in self.note_search_collection.keys()):
             if any(dropping_merchandise in stuff for stuff in self.note_search_collection.keys()) and self.Merchandise_list:
                 self.__clear_shopping_list(self.Merchandise_list)
-                with open("Merchandise (Misc., etc.)_json.txt","r") as f:
+                with open(self.logging_folder / ("Merchandise (Misc., etc.)_json.txt"),"r") as f:
                     data = json.load(f)
                 for key, value in enumerate(data.items()):
                     _, food_item = value
@@ -126,7 +130,7 @@ class GoogleKeepLog:
                 indicator.trash()    
                 self.keep.sync()
         else:
-            with open("Merchandise (Misc., etc.)_json.txt","r") as f:
+            with open(self.logging_folder / ("Merchandise (Misc., etc.)_json.txt"),"r") as f:
                 data = json.load(f)
             gnote = self.keep.createList('Merchandise (Misc., etc.)')
             for key, value in enumerate(data.items()):
