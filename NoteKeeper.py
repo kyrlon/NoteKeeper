@@ -9,11 +9,12 @@ class GoogleKeepLog:
         self.Groceries_list = None
         self.Merchandise_list = None
         self.note_search_collection = dict()
-        self.g_keep_login()
         self.logging_folder = Path("GoogleKeepNoteBackups")
         self.logging_folder.mkdir(parents=True, exist_ok=True)
         self.credential_folder = Path("credz")
         self.credential_folder.mkdir(parents=True, exist_ok=True)
+        self.g_keep_login()
+
 
     
     def g_keep_check_loop(self):
@@ -30,7 +31,7 @@ class GoogleKeepLog:
         print("Done!")
 
     def g_keep_login(self):
-        with open(self.credential_folder / "cred.json",) as cred:
+        with open(self.credential_folder / "cred.json","w") as cred:
             self.config = json.load(cred)
         self.keep = gkeepapi.Keep()
         example = self.keep.login(self.config["username"], self.config["password"])
