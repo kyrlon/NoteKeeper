@@ -157,5 +157,10 @@ class GoogleKeepLog:
 
 
 if __name__ == "__main__":
-    ex = GoogleKeepLog()
-    ex.g_keep_check_loop()
+    while True:
+        try:
+            ex = GoogleKeepLog()
+            ex.g_keep_check_loop()
+        except:
+            sleep(10)
+            continue
