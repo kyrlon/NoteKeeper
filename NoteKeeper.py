@@ -31,7 +31,9 @@ class GoogleKeepLog:
         print("Done!")
 
     def g_keep_login(self):
-        with open(self.credential_folder / "cred.json","w") as cred:
+        cred_path = self.credential_folder / "cred.json"
+        cred_path = "credz/cred.json"
+        with open(cred_path,"w") as cred:
             self.config = json.load(cred)
         self.keep = gkeepapi.Keep()
         example = self.keep.login(self.config["username"], self.config["password"])
@@ -84,11 +86,13 @@ class GoogleKeepLog:
             note_name = B_checklist.title
             for num,shopping_item in enumerate(B_checklist.items):
                 backup_dict[str(num)] = [shopping_item.checked, shopping_item.text]
-            with open(self.logging_folder / (note_name + "_json.txt"), "w") as file_t:
+            json_file = self.logging_folder / (note_name + "_json.txt")
+            with open(json_file, "w") as file_t:
                 file_t.write(json.dumps(backup_dict, sort_keys=True, indent=4))
             
             #Human Readable
-            with open(self.logging_folder / (note_name + ".txt"), "w", encoding='utf-8') as f:
+            text_file = self.logging_folder / (note_name + ".txt")
+            with open(text_file, "w", encoding='utf-8') as f:
                 f.write(B_checklist.text)
 
     def g_keep_restore(self):
@@ -164,6 +168,6 @@ if __name__ == "__main__":
         try:
             ex = GoogleKeepLog()
             ex.g_keep_check_loop()
-        except:
+        except Exception as e:
             time.sleep(10)
             continue
