@@ -1,5 +1,3 @@
-#!/env/bin/python3
-
 import gkeepapi
 import json, time
 import getpass
