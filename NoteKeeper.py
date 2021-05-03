@@ -2,7 +2,7 @@ import gkeepapi
 import json, time
 import getpass
 from collections import defaultdict
-
+from pathlib import Path
 
 class GoogleKeepLog:
     def __init__(self, verbose=False):
@@ -10,6 +10,9 @@ class GoogleKeepLog:
         self.Merchandise_list = None
         self.note_search_collection = dict()
         self.the_cloud = None
+        self.logging_folder = Path("GoogleKeepNoteBackups")
+        self.logging_folder.mkdir(parents=True, exist_ok=True)
+        self.credential_path = Path("credz/cred.json")
         self.g_keep_login()
 
     
@@ -21,14 +24,14 @@ class GoogleKeepLog:
             self.fix_list(self.Merchandise_list)
             self.g_keep_backup()
             print("waiting....")
-            time.sleep(30)
+            time.sleep(10)
             self.g_keep_restore()
             print("Loop %s done" % n)
         print("Done!")
 
 
     def g_keep_login(self):
-        with open("credz/cred.json",) as cred:
+        with open(str(self.credential_path),"r") as cred:
             self.config = json.load(cred)
         self.keep = gkeepapi.Keep()
         example = self.keep.login(self.config["username"], self.config["password"])
@@ -40,7 +43,7 @@ class GoogleKeepLog:
     def fix_list(self, store_incremental_lists):
         if not store_incremental_lists:
             self.g_keep_restore()
-            #Need to restore store_incre
+            print("Need to restore %s List" %store_incremental_lists)
             return 
         num_on_shopping_list = 0
         shopping_list_dict = defaultdict(list)
@@ -81,16 +84,14 @@ class GoogleKeepLog:
             note_name = B_checklist.title
             for num,shopping_item in enumerate(B_checklist.items):
                 backup_dict[str(num)] = [shopping_item.checked, shopping_item.text]
-            if self.the_cloud:
-                pass 
-            else:
-                with open(note_name + "_json.txt", "w") as file_t:
-                    file_t.write(json.dumps(backup_dict, sort_keys=True, indent=4))
-                
-                #Human Readable
-                with open(note_name + ".txt", "w", encoding='utf-8') as f:
-                    f.write(B_checklist.text)
-
+            json_file = self.logging_folder / (note_name + "_json.txt")
+            with open(str(json_file), "w") as file_t:
+                file_t.write(json.dumps(backup_dict, sort_keys=True, indent=4))
+            
+            #Human Readable
+            text_file = self.logging_folder / (note_name + ".txt")
+            with open(str(text_file), "w", encoding='utf-8') as f:
+                f.write(B_checklist.text)
 
     def g_keep_restore(self):
         self.g_keep_search()
@@ -102,7 +103,7 @@ class GoogleKeepLog:
                 if self.the_cloud:
                     pass #return data
                 else:
-                    with open("Groceries_json.txt","r") as f:
+                    with open(str(self.logging_folder / ("Groceries_json.txt")),"r") as f:
                         data = json.load(f)
                 for key, value in enumerate(data.items()):
                     _, food_item = value
@@ -115,7 +116,7 @@ class GoogleKeepLog:
             if self.the_cloud:
                 pass #return data
             else:
-                with open("Groceries_json.txt","r") as f:
+                with open(str(self.logging_folder / ("Groceries_json.txt")),"r") as f:
                     data = json.load(f)
             gnote = self.keep.createList('Groceries')
             for key, value in enumerate(data.items()):
@@ -131,7 +132,7 @@ class GoogleKeepLog:
                 if self.the_cloud:
                     pass #return data
                 else:
-                    with open("Merchandise (Misc., etc.)_json.txt","r") as f:
+                    with open(str(self.logging_folder / ("Merchandise (Misc., etc.)_json.txt")),"r") as f:
                         data = json.load(f)
                 for key, value in enumerate(data.items()):
                     _, food_item = value
@@ -144,7 +145,7 @@ class GoogleKeepLog:
             if self.the_cloud:
                 pass #return data
             else:
-                with open("Merchandise (Misc., etc.)_json.txt","r") as f:
+                with open(str(self.logging_folder / ("Merchandise (Misc., etc.)_json.txt")),"r") as f:
                     data = json.load(f)
             gnote = self.keep.createList('Merchandise (Misc., etc.)')
             for key, value in enumerate(data.items()):
@@ -156,6 +157,7 @@ class GoogleKeepLog:
 
     def g_keep_search(self):
         search_list = list(self.keep.find(pinned=True))
+        self.note_search_collection = dict()
         for note in search_list:
             self.note_search_collection[note.title] = note.id
         self.Merchandise_list = self.keep.get(self.__dict_key_from_str("Merchandise", self.note_search_collection))
@@ -172,5 +174,10 @@ class GoogleKeepLog:
 
 
 if __name__ == "__main__":
-    ex = GoogleKeepLog()
-    ex.g_keep_check_loop()
+    while True:
+        try:
+            ex = GoogleKeepLog()
+            ex.g_keep_check_loop()
+        except Exception as e:
+            time.sleep(10)
+            continue
