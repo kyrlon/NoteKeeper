@@ -84,14 +84,19 @@ class GoogleKeepLog:
             note_name = B_checklist.title
             for num,shopping_item in enumerate(B_checklist.items):
                 backup_dict[str(num)] = [shopping_item.checked, shopping_item.text]
-            json_file = self.logging_folder / (note_name + "_json.txt")
-            with open(str(json_file), "w") as file_t:
-                file_t.write(json.dumps(backup_dict, sort_keys=True, indent=4))
-            
-            #Human Readable
-            text_file = self.logging_folder / (note_name + ".txt")
-            with open(str(text_file), "w", encoding='utf-8') as f:
-                f.write(B_checklist.text)
+            if self.the_cloud:
+                pass
+                # backup_dict
+                # B_checklist.text
+            else:
+                json_file = self.logging_folder / (note_name + "_json.txt")
+                with open(str(json_file), "w") as file_t:
+                    file_t.write(json.dumps(backup_dict, sort_keys=True, indent=4))
+                
+                #Human Readable
+                text_file = self.logging_folder / (note_name + ".txt")
+                with open(str(text_file), "w", encoding='utf-8') as f:
+                    f.write(B_checklist.text)
 
     def g_keep_restore(self):
         self.g_keep_search()
