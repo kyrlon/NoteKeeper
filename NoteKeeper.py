@@ -3,13 +3,14 @@ import json, time
 import getpass
 from collections import defaultdict
 from pathlib import Path
-
+from GoogleKeepDriveInterface import GoogleKeepDriveInterface
 class GoogleKeepLog:
     def __init__(self, verbose=False):
         self.Groceries_list = None
         self.Merchandise_list = None
         self.note_search_collection = dict()
         self.the_cloud = None
+        self.g_drive_log_api = GoogleKeepDriveInterface()
         self.logging_folder = Path("GoogleKeepNoteBackups")
         self.logging_folder.mkdir(parents=True, exist_ok=True)
         self.credential_path = Path("credz/cred.json")
@@ -75,6 +76,7 @@ class GoogleKeepLog:
 
     def g_keep_backup(self):
         backup_note_list = list()
+        the_cloud = True
         if self.Groceries_list:
             backup_note_list.append(self.Groceries_list)
         if self.Merchandise_list:
@@ -82,19 +84,20 @@ class GoogleKeepLog:
         for B_checklist in backup_note_list:
             backup_dict = dict()
             note_name = B_checklist.title
+            note_name_j = note_name + "_json"
+            note_name_t = note_name
             for num,shopping_item in enumerate(B_checklist.items):
                 backup_dict[str(num)] = [shopping_item.checked, shopping_item.text]
-            if self.the_cloud:
-                pass
-                # backup_dict
-                # B_checklist.text
+            if the_cloud:
+                self.g_drive_log_api.txt_backup(note_name_t, B_checklist.text)
+                self.g_drive_log_api.json_backup(note_name_j, backup_dict)
             else:
-                json_file = self.logging_folder / (note_name + "_json.txt")
+                json_file = self.logging_folder / (note_name_j + ".txt")
                 with open(str(json_file), "w") as file_t:
                     file_t.write(json.dumps(backup_dict, sort_keys=True, indent=4))
                 
                 #Human Readable
-                text_file = self.logging_folder / (note_name + ".txt")
+                text_file = self.logging_folder / (note_name_t + ".txt")
                 with open(str(text_file), "w", encoding='utf-8') as f:
                     f.write(B_checklist.text)
 

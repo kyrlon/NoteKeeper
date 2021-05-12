@@ -35,7 +35,7 @@ class GoogleKeepDriveInterface:
     def notekeeper_log(self):
         #Check if NoteKeeper_log folder exists
         notekeeper_folder_metadata = {
-            'name': 'NoteFolder',
+            'name': 'GoogleKeepNoteBackups',
             'mimeType': 'application/vnd.google-apps.folder'
         }
         query = "name contains '{}' and mimeType='{}' and trashed=false".format(notekeeper_folder_metadata["name"],notekeeper_folder_metadata["mimeType"])
@@ -58,6 +58,7 @@ class GoogleKeepDriveInterface:
             self.file_names[log_file.get("name")] = log_file.get("id")
 
     def txt_backup(self, filename, data):
+        self.g_drive_folder_query()
         #notekeeper_folder_id = notekeeper_log()
         #checks if json and humanreadable exists
 
@@ -92,6 +93,7 @@ class GoogleKeepDriveInterface:
                                                 fields='id').execute()
     
     def json_backup(self, filename, data):
+        self.g_drive_folder_query()
         #checks if the json exists
         json_file_name = "jtest2"
         json_file_name = filename
@@ -120,50 +122,6 @@ class GoogleKeepDriveInterface:
             file = self.DRIVE.files().create(body=file_metadata,
                                                 media_body=media,
                                                 fields='id').execute()
-
-
-
-def blah():
-
-    print(2)
-
-
-    """ files = DRIVE.files().list().execute().get('files', [])
-    for f in files:
-        print(f['name'], f['mimeType']) """
-
-    #checks if 
-
-
-    #create file in that folder
-    #folder_id_notes = note_gfolder.get('id')
-    folder_id_notes = "1GWMxde9YSL3IirrcQ1Q7-MLBZdCxI8w9"
-    file_metadata = {
-        'name': 'My Report',
-        'mimeType': 'application/vnd.google-apps.script',
-        'parents':[folder_id_notes]
-    }
-    media = MediaFileUpload('human_readable.txt',
-                            mimetype='text/plain',
-                            resumable=True)
-    file = DRIVE.files().create(body=file_metadata,
-                                        media_body=media,
-                                        fields='id').execute()
-    print('File ID: %s' % file.get('id'))
-
-    time.sleep(30)
-
-
-
-    #update that same file later....
-    file_id = file.get('id')
-    media = MediaFileUpload('human_readable.txt',
-                            mimetype='text/plain',
-                            resumable=True)
-    file = DRIVE.files().update(fileId=file_id,body=None,
-                                        media_body=media).execute()
-    print('File ID: %s' % file.get('id'))
-
 
 def downloader():
     ###########################
