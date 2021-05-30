@@ -9,7 +9,7 @@ class GoogleKeepLog:
         self.Groceries_list = None
         self.Merchandise_list = None
         self.note_search_collection = dict()
-        self.the_cloud = None
+        self.the_cloud = True
         self.g_drive_log_api = GoogleKeepDriveInterface()
         self.logging_folder = Path("GoogleKeepNoteBackups")
         self.logging_folder.mkdir(parents=True, exist_ok=True)
@@ -76,7 +76,6 @@ class GoogleKeepLog:
 
     def g_keep_backup(self):
         backup_note_list = list()
-        the_cloud = True
         if self.Groceries_list:
             backup_note_list.append(self.Groceries_list)
         if self.Merchandise_list:
@@ -88,7 +87,7 @@ class GoogleKeepLog:
             note_name_t = note_name
             for num,shopping_item in enumerate(B_checklist.items):
                 backup_dict[str(num)] = [shopping_item.checked, shopping_item.text]
-            if the_cloud:
+            if self.the_cloud:
                 self.g_drive_log_api.txt_backup(note_name_t, B_checklist.text)
                 self.g_drive_log_api.json_backup(note_name_j, backup_dict)
             else:
@@ -109,7 +108,7 @@ class GoogleKeepLog:
             if any(dropping_groceries in stuff for stuff in self.note_search_collection.keys()) and self.Groceries_list:
                 self.__clear_shopping_list(self.Groceries_list)
                 if self.the_cloud:
-                    pass #return data
+                    data = self.g_drive_log_api.json_restore("Groceries_json")
                 else:
                     with open(str(self.logging_folder / ("Groceries_json.txt")),"r") as f:
                         data = json.load(f)
@@ -122,7 +121,7 @@ class GoogleKeepLog:
                 self.keep.sync()
         else:
             if self.the_cloud:
-                pass #return data
+                data = self.g_drive_log_api.json_restore("Groceries_json")
             else:
                 with open(str(self.logging_folder / ("Groceries_json.txt")),"r") as f:
                     data = json.load(f)
@@ -138,7 +137,7 @@ class GoogleKeepLog:
             if any(dropping_merchandise in stuff for stuff in self.note_search_collection.keys()) and self.Merchandise_list:
                 self.__clear_shopping_list(self.Merchandise_list)
                 if self.the_cloud:
-                    pass #return data
+                    data = self.g_drive_log_api.json_restore("Merchandise (Misc., etc.)_json")
                 else:
                     with open(str(self.logging_folder / ("Merchandise (Misc., etc.)_json.txt")),"r") as f:
                         data = json.load(f)
@@ -151,7 +150,7 @@ class GoogleKeepLog:
                 self.keep.sync()
         else:
             if self.the_cloud:
-                pass #return data
+                data = self.g_drive_log_api.json_restore("Merchandise (Misc., etc.)_json")
             else:
                 with open(str(self.logging_folder / ("Merchandise (Misc., etc.)_json.txt")),"r") as f:
                     data = json.load(f)

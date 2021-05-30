@@ -62,7 +62,6 @@ class GoogleKeepDriveInterface:
         #notekeeper_folder_id = notekeeper_log()
         #checks if json and humanreadable exists
 
-        text_file_name = "test1"
         text_file_name = filename
         temp_txt_filepath = Path(self._temp_dir.name) / (str(time.time()) + 'human.txt')
         
@@ -77,7 +76,6 @@ class GoogleKeepDriveInterface:
                                     resumable=True)
             file = self.DRIVE.files().update(fileId=file_id,body=None,
                                                 media_body=media).execute()
-            #print('File ID: %s' % file.get('id'))
 
         else:
             file_metadata = {
@@ -95,7 +93,6 @@ class GoogleKeepDriveInterface:
     def json_backup(self, filename, data):
         self.g_drive_folder_query()
         #checks if the json exists
-        json_file_name = "jtest2"
         json_file_name = filename
 
         temp_json_filepath = str(Path(self._temp_dir.name) / (str(time.time())+'json.txt'))
@@ -123,20 +120,24 @@ class GoogleKeepDriveInterface:
                                                 media_body=media,
                                                 fields='id').execute()
 
-def downloader():
-    ###########################
-    #download select file
-    file_id = file.get("id")
-    request = DRIVE.files().export_media(fileId=file_id,
-                                                mimeType='text/plain')
-    fh = io.FileIO("ex2.txt","wb")
-    downloader = MediaIoBaseDownload(fh, request)
-    done = False
-    while done is False:
-        status, done = downloader.next_chunk()
-        print("Download %d%%." % int(status.progress() * 100))
+    def json_restore(self, json_filename):
+        ###########################
+        #download select file
+        file_id = self.file_names[json_filename]
+        request = self.DRIVE.files().export_media(fileId=file_id,
+                                                    mimeType='text/plain')
+        temp_filepath = Path(self._temp_dir.name) / ('restored_%s.txt' % json_filename)
+        #fh = io.FileIO("ex2.txt","wb")
+        fh = io.FileIO(str(temp_filepath),"wb")
+        downloader = MediaIoBaseDownload(fh, request)
+        done = False
+        while done is False:
+            status, done = downloader.next_chunk()
+            print("Download %d%%." % int(status.progress() * 100))
+        with open(str(temp_filepath),"r", encoding='utf-8-sig') as f:
+            data = json.load(f)
+        return data
 
-    print(2)
 
 if __name__ == "__main__":
     #notekeeper_log()
