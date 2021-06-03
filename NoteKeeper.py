@@ -1,9 +1,9 @@
 import gkeepapi
 import json, time
-import getpass
 from collections import defaultdict
 from pathlib import Path
 from GoogleKeepDriveInterface import GoogleKeepDriveInterface
+
 class GoogleKeepLog:
     def __init__(self, verbose=False):
         self.Groceries_list = None
