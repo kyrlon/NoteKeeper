@@ -1,5 +1,4 @@
-env/
+py_env/
 credz/
-.vscode/
 NoteFolder/
 GoogleKeepNoteBackups/
