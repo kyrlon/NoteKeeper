@@ -21,6 +21,12 @@
             "type": "shell",
             "group": "build",
             "command": "python3 -m venv py_venv && source py_venv/bin/activate && python3 -m pip install --upgrade pip && python3 -m pip install -r requirements.txt && deactivate py_venv"
+        },
+        {
+            "label": "(Linux) Update GoogleNoteKeeper Service",
+            "type": "shell",
+            "group": "build",
+            "command": "sudo cp GoogleNoteKeeper.service /etc/systemd/system/ && sudo systemctl daemon-reload && sudo systemctl restart GoogleNoteKeeper.service & exit"
         }
     ]
 }
