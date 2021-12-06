@@ -185,6 +185,11 @@ if __name__ == "__main__":
         try:
             ex = GoogleKeepLog()
             ex.g_keep_check_loop()
+        except gkeepapi.exception.LoginException as err:
+            #gkeepapi.exception.LoginException: ('NeedsBrowser', 'To access your account, you must sign in on the web. Touch Next to start browser sign-in.')
+            pass
         except Exception as e:
+            print("Error %s" % e)
+            print("Restarting...")
             time.sleep(10)
             continue
