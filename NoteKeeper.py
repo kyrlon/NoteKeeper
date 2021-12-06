@@ -2,7 +2,7 @@ import gkeepapi
 import json, time
 from collections import defaultdict
 from pathlib import Path
-from GoogleKeepDriveInterface import GoogleKeepDriveInterface
+#from GoogleKeepDriveInterface import GoogleKeepDriveInterface
 
 class GoogleKeepLog:
     def __init__(self, verbose=False):
@@ -10,7 +10,8 @@ class GoogleKeepLog:
         self.Merchandise_list = None
         self.note_search_collection = dict()
         self.the_cloud = True
-        self.g_drive_log_api = GoogleKeepDriveInterface()
+        self.the_cloud = False
+        #self.g_drive_log_api = GoogleKeepDriveInterface()
         self.logging_folder = Path("GoogleKeepNoteBackups")
         self.logging_folder.mkdir(parents=True, exist_ok=True)
         self.credential_path = Path("credz/cred.json")

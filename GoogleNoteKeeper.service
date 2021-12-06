@@ -8,9 +8,9 @@ After=multi-user.target
 User=pi
 Type=idle
 WorkingDirectory=/home/pi/Documents/NoteKeeper/
-VIRTUAL_ENV=/home/pi/Documents/NoteKeeper/env/
+VIRTUAL_ENV=/home/pi/Documents/NoteKeeper/py_env/
 Environment=PATH=$VIRTUAL_ENV/bin:$PATH
-ExecStart=/home/pi/Documents/NoteKeeper/env/bin/python3 -u NoteTaker.py
+ExecStart=/home/pi/Documents/NoteKeeper/py_env/bin/python3 -u NoteKeeper.py
 
 [Install]
 WantedBy=multi-user.target
